@@ -1,4 +1,4 @@
-
+const Cuerpo_correo="";
 var c_detalle = [];
 
 function MostrarTabla() {
@@ -47,10 +47,10 @@ function MostrarTabla() {
             resultadoDiv.innerHTML = `<table class="table table-striped id="Tabla_Amortizaciones">
    <thead>
    <tr>
-       <th>Meses</th>
+       <th>Mes</th>
        <th>Cuota</th>
        <th>Capital</th>
-       <th>Intereses</th>
+       <th>Interes</th>
        <th>Saldo</th>
        <th>Impuesto</th>
    </tr>
@@ -110,10 +110,10 @@ function MostrarTabla() {
             resultadoDiv.innerHTML = `<table class="table table-striped" id="Tabla_Amortizaciones">
     <thead>
     <tr>
-        <th>Meses</th>
+        <th>Mes</th>
         <th>Cuota</th>
         <th>Capital</th>
-        <th>Intereses</th>
+        <th>Interes</th>
         <th>Saldo</th>
         <th>Impuesto</th>
     </tr>
@@ -258,19 +258,18 @@ function calcularPrestamo() {
     <hr>
     <p><strong>Monto Solicitado:</strong> Q${monto.toFixed(2)}</p>
     <p><strong>No. de Cuotas:</strong> ${cuotas}</p>
-    <p class="Tipo_detalle"><strong>Tipo de Crédito:</strong> ${tipo}</p>
+  
     <hr>
-
     <div class="outer-wrapper">
     <div class="table-wrapper">
 
     <table class="table table-striped" id="Tabla_Amortizaciones" style="margin-bottom: 2vw;">
         <thead>
-        <tr>
-            <th>Meses</th>
+        <tr >
+            <th>Mes</th>
             <th>Cuota</th>
             <th>Capital</th>
-            <th>Intereses</th>
+            <th>Interes</th>
             <th>Saldo</th>
             <th>Impuesto</th>
         </tr>
@@ -296,6 +295,60 @@ function calcularPrestamo() {
     <hr>
     <!--<p><strong>Total a pagar:</strong> Q${totalPagar.toFixed(2)}</p>
     <p><strong>Total de intereses:</strong> Q${totalInteres.toFixed(2)}</p>-->`;
+
+    const Cuerpo_correo = document.getElementById('Formato_Correo');
+        Cuerpo_correo.innerHTML=`
+        <h2 style="margin-top: 1vw; text-align: center; font-size: 28px;">Solicitud del Préstamo</h2>
+        <p><strong style="font-size: 14px;">Nombre:  </strong> ${nombre}</p>
+        <p><strong style="font-size: 14px;">Número de DPI:  </strong> ${dpi}</p>
+        <p><strong style="font-size: 14px;">NIT:  </strong> ${nit}</p>
+        <p><strong style="font-size: 14px;">Correo Electrónico:  </strong> ${correo}</p>
+        <p><strong style="font-size: 14px;">Teléfono:  </strong> ${telefono}</p>
+        <p><strong style="font-size: 14px;">Empresa en la que labora:</strong> ${empresa}</p>
+        <p><strong style="font-size: 14px;">Puesto que ocupa:  </strong> ${puesto}</p>
+        <p><strong style="font-size: 14px;">Años de laburo en la empresa:  </strong> ${Tiempo}</p>
+        <p><strong style="font-size: 14px;">Total de Ingresos mensuales:  </strong> Q${ingresos.toFixed(2)}</p>
+        <hr>
+        <p><strong>Monto Solicitado:</strong> Q${monto.toFixed(2)}</p>
+        <p><strong>No. de Cuotas:</strong> ${cuotas}</p>
+        <p class="Tipo_detalle"><strong>Tipo de Crédito:</strong> ${tipo}</p>
+        <hr>
+        <div class="outer-wrapper">
+        <div class="table-wrapper">
+    
+        <table class="table table-striped" id="Tabla_Amortizaciones" style="margin-bottom: 2vw; border: black solid 2px;  width: 1200px; margin-left: 8px;">
+            <thead>
+            <tr style=" border: black solid 2px; background-color: #aeb1b3; ">
+                <th style="width:width: 400px;">Mes</th>
+                <th style="width:width: 400px;">Cuota</th>
+                <th style="width:width: 400px;">Capital</th>
+                <th style="width:width: 400px;">Interes</th>
+                <th style="width:width: 400px;">Saldo</th>
+                <th style="width:width: 400px;">Impuesto</th>
+            </tr>
+            </thead>
+    
+            <tbody>
+            ${c_detalle.map(d => `
+                <tr style="text-align: center;border: black solid 2px;">
+                <td style="width:width: 400px;">${d.mes}</td>
+                <td style="width:width: 400px;">Q${d.cuota}</td>
+                <td style="width:width: 400px;">Q${d.capital}</td>
+                <td style="width:width: 400px;">Q${d.interes}</td>
+                <td style="width:width: 400px;">Q${d.saldo}</td>
+                <td style="width:width: 400px;">Q${d.impuesto}</td>
+                </tr>
+            `).join('')}
+            </tbody>
+        </table>
+    
+        </div>
+        </div>
+    
+        <hr>`;
+
+
+
 
         const tabla = document.getElementById('Detalles_Prestamo');
         tabla.style.display = 'block';
@@ -347,7 +400,7 @@ function sendEmail() {
             }
         }
     };
-    const message = encodeURIComponent(document.getElementById("Detalles_Prestamo").innerHTML);
+    const message = encodeURIComponent(document.getElementById("Formato_Correo").innerHTML);
     const correo = encodeURIComponent(document.getElementById("correo").value);
     const captchaResponse = grecaptcha.getResponse();
     const postData = `correo=${correo}&message=${message}&g-recaptcha-response=${captchaResponse}`;
@@ -363,38 +416,36 @@ form.addEventListener("submit", function (event) {
 });
 
 
+//codigo para implemtar la descarga de la informacion en un pdf
 
 function generarPDF() {
-    /*
     // Obtener el div que contiene el contenido a exportar
     var divContenido = document.getElementById('Detalles_Prestamo').innerHTML;
     // Crear un nuevo documento PDF
-    var doc = new jsPDF();
+    var doc = new jsPDF('p','pt','letter');
+    var margin=10;
+    var scale=(doc.internal.pageSize.width - margin * 2);
+    document.body.scrollWidth;
+    doc.html(divContenido,{
+        x: margin,
+        y:margin,
+        html2canvas:{
+            scale:scale,
+        },
+        callback:function(doc){
+            window.open(doc.output('bloburl'), '_blank');
+        }
+
+    })
+
+
+/*
     // Agregar el contenido del div al documento PDF
     doc.fromHTML(divContenido,15,15,{
     });
     // Descargar el documento PDF
     window.open(doc.output('bloburl'), '_blank');
-    /*doc.save('miDocumento.pdf');*/
-
-    var xhttp = new XMLHttpRequest();
-  
-  // Define la función que se ejecutará cuando se complete la solicitud AJAX
-  xhttp.onreadystatechange = function() {
-    if (this.readyState == 4 && this.status == 200) {
-      // Maneja la respuesta del servidor aquí
-      console.log(this.responseText);
-    }
-  };
-  
-  // Envía la solicitud AJAX a tu archivo PHP
-  xhttp.open("GET", "././src/prueba.php", true);
-  xhttp.send();
-
-
-
-
-
+   // doc.save('miDocumento.pdf');*/
   }
  
 
