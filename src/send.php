@@ -28,5 +28,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
    //     echo json_encode(array("success" => false, "message" => "Por favor, resuelve el captcha correctamente."));
     //}
 
+
+
+
 }
 ?>
